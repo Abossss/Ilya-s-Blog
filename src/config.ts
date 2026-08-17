@@ -11,8 +11,8 @@ export const SITE = {
   author: "Ilya Chang",
   language: "zh-CN",
   locale: "zh-CN",
-  url: "https://github.com/Abossss/Ilya-s-Blog",
-  basePath: "/",
+  url: "https://abossss.github.io",
+  basePath: "/Ilya-s-Blog",
   brand: {
     name: "Ilya Chang",
     accent: "Blog",
