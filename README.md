@@ -1,72 +1,29 @@
-# Astro Bento Blog Template
+# Ilya Chang's Blog
 
-A free, open-source Astro blog theme with a bento archive, list and network views, a block-based post format, dark mode, and a browser-based post editor.
+Ilya Chang 的个人博客，基于 [Astro](https://astro.build) 构建。使用 Notion 风格的块编辑器写作，内容以 JSON 文件存储，支持卡片 / 列表 / 网络三种归档视图、标签分类、RSS、深色模式与 Google Drive 图片直传。
 
-- Demo: [dgddgd314.github.io/astro-bento-blog-template](https://dgddgd314.github.io/astro-bento-blog-template/)
-- Repository: [github.com/dgddgd314/astro-bento-blog-template](https://github.com/dgddgd314/astro-bento-blog-template)
+## 常用命令
 
-## Features
+| 命令 | 作用 |
+| --- | --- |
+| `npm run dev` | 启动本地开发服务器（默认 http://localhost:4321） |
+| `npm run build` | 构建生产站点到 `dist/` |
+| `npm run preview` | 本地预览生产构建 |
 
-- Responsive bento, list, and post-network archive layouts
-- Astro Content Collections backed by portable JSON documents
-- Categories, tags, search, RSS, and automatic related-post links
-- Notion-inspired block renderer with rich text, tables, equations, callouts, bookmarks, and covers
-- Built-in `/editor/` for creating and exporting Post JSON v2 files
-- Google Drive image upload directly from the editor
-- Light and dark themes with View Transitions
-- GitHub Pages deployment workflow included
-- TypeScript and Tailwind CSS 4
+## 写文章
 
-## Quick start
-
-Use GitHub's **Use this template** button, or create a new Astro project from the repository:
-
-```bash
-npm create astro@latest my-blog -- --template dgddgd314/astro-bento-blog-template
-cd my-blog
-npm install
-npm run dev
-```
-
-Node.js 22.12.0 or newer is required. The local site runs at `http://localhost:4321` by default.
-
-## Customize the site
-
-Edit `src/config.ts`. This is the main configuration surface for:
-
-- `title`, `description`, and `author`
-- document `language` and date `locale`
-- deployment `url` and `basePath`
-- the two-part wordmark under `brand`
-- GitHub, RSS, and other `socialLinks`
-- the browser-storage namespace
-- View Transitions
-
-For a GitHub Pages project site such as `https://username.github.io/my-blog/`, use:
-
-```ts
-url: "https://username.github.io",
-basePath: "/my-blog",
-```
-
-For a custom domain or a repository named `username.github.io`, use `basePath: "/"`.
-
-UI copy is kept close to the relevant components: the archive is in `src/components/blog/BlogArchive.astro`, and the editor shell is in `src/pages/editor/index.astro`.
-
-## Write posts
-
-Posts are Post JSON v2 documents stored anywhere below `src/content/blog/`. The collection reads `*.json` files recursively.
+文章是 Post JSON v2 文档，放在 `src/content/blog/` 下（支持子目录）。最小结构：
 
 ```json
 {
   "version": 2,
   "meta": {
-    "title": "Post title",
+    "title": "文章标题",
     "slug": "post-slug",
-    "description": "A short summary for the archive and RSS feed.",
-    "pubDate": "2026-08-15",
-    "category": "engineering",
-    "tags": ["astro", "notes"],
+    "description": "列表与 RSS 中显示的简介",
+    "pubDate": "2026-08-18",
+    "category": "随笔",
+    "tags": ["随笔", "笔记"],
     "status": ["published"]
   },
   "page": {
@@ -77,76 +34,39 @@ Posts are Post JSON v2 documents stored anywhere below `src/content/blog/`. The 
 }
 ```
 
-If `meta.category` is omitted or empty, the folder path becomes the category. For example, `src/content/blog/engineering/post.json` belongs to `engineering`.
+- `meta.category` 省略时，使用 `src/content/blog/` 下的文件夹路径作为分类。
+- 也可以使用内置编辑器：开发时打开 `/editor/` 写作，完成后点 **JSON 保存** 下载文件，放入 `src/content/blog/` 后重新构建即可。
+- 完整的字段与块类型说明见 `public/editor.md`。
 
-### Browser editor
+## 图片上传（Google Drive）
 
-Open `/editor/` during local development. Create or import a document, then use **JSON 저장** to download it. Move the exported file into `src/content/blog/` and rebuild the site.
+`/editor/` 支持把图片直接上传到 Google Drive 并生成公开直链。需要一次性配置 Google Cloud OAuth，步骤见 `public/drive-image-upload.md`。不用此功能不影响博客其他部分。
 
-The editor keeps drafts, recent emoji, and non-secret Drive settings only in the current browser. No account profile or Google access token is persisted. The complete Post JSON contract is available from the editor as `public/editor.md`.
+## 站点配置
 
-## Google Drive image upload
+`src/config.ts` 是唯一配置入口：标题、简介、作者、语言、部署 `url` / `basePath`、品牌文字、社交链接等。
 
-Drive upload is a built-in editor feature. The rest of the blog works without configuring it; setup begins only when a user chooses **Drive settings** or **Upload to Drive**.
+## 部署到 GitHub Pages
 
-1. Create a Google Drive folder for blog images.
-2. Enable the Google Drive API in a Google Cloud project.
-3. Create a Web application OAuth client ID.
-4. Add the local and deployed origins to **Authorized JavaScript origins**.
-5. In `/editor/`, enter the public OAuth client ID and Drive folder ID under **Drive settings**.
+1. 保持 `src/config.ts` 中的 `url: "https://abossss.github.io"` 和 `basePath: "/Ilya-s-Blog"`。
+2. 推送到 `main` 分支（仓库自带的 Actions 工作流会自动构建并发布）。
+3. 在 GitHub **Settings → Pages → Source** 选择 **GitHub Actions**。
+4. 站点地址：`https://abossss.github.io/Ilya-s-Blog/`。
 
-The editor requests the narrow `drive.file` scope, stores the access token only in memory, and makes newly uploaded images publicly readable. Never enter a client secret, and do not upload private images. See `public/drive-image-upload.md` for the full setup guide.
-
-## Post network
-
-Posts sharing tags are linked automatically in the network view. Add curated relationships in `src/data/post-network.json`:
-
-```json
-{
-  "source": "first-post-slug",
-  "target": "second-post-slug",
-  "type": "reference",
-  "label": "reference",
-  "weight": 2
-}
-```
-
-Both `source` and `target` must match post slugs.
-
-## Deploy to GitHub Pages
-
-1. Update `SITE.url` and `SITE.basePath` in `src/config.ts`.
-2. Push the project to a GitHub repository using the `main` branch.
-3. Open **Settings → Pages** in GitHub.
-4. Select **GitHub Actions** as the deployment source.
-5. Run the included workflow or push another commit.
-
-The workflow uses Node.js 22.12, installs from `package-lock.json`, builds the site, and publishes `dist/`.
-
-If you use Drive uploads on GitHub Pages, add only the origin, such as `https://username.github.io`, to the OAuth client's Authorized JavaScript origins. URL paths are not valid origins.
-
-## Commands
-
-| Command | Action |
-| --- | --- |
-| `npm run dev` | Start the local development server |
-| `npm run build` | Build the production site into `dist/` |
-| `npm run preview` | Preview the production build locally |
-
-## Project structure
+## 目录结构
 
 ```text
 src/
-  components/        Archive and block components
-  content/blog/      Post JSON files
-  data/              Post-network configuration
-  layouts/           Shared and post layouts
-  pages/             Blog, tag, editor, RSS, and 404 routes
-  scripts/           Editor and Google Drive upload logic
-  styles/            Theme, archive, editor, and block styles
-  config.ts          Main user configuration
+  content/blog/   Post JSON 文章
+  components/     归档与块渲染组件
+  layouts/        页面布局
+  pages/          博客、标签、编辑器、RSS、404 路由
+  lib/            块模型与工具函数
+  scripts/        编辑器与 Drive 上传逻辑
+  styles/         主题样式
+  config.ts       站点配置
 ```
 
 ## License
 
-MIT © dgddgd314. See [LICENSE](./LICENSE).
+MIT
