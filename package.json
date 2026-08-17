@@ -1,0 +1,47 @@
+{
+  "name": "my-blog",
+  "description": "Ilya Chang 的个人博客，基于 Astro 构建。",
+  "type": "module",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Ilya Chang",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abossss/Ilya-s-Blog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Abossss/Ilya-s-Blog/issues"
+  },
+  "homepage": "https://github.com/Abossss/Ilya-s-Blog",
+  "keywords": [
+    "astro",
+    "astro-theme",
+    "blog",
+    "bento",
+    "typescript",
+    "tailwindcss"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "astro": "^7.2.2",
+    "katex": "^0.18.1",
+    "tailwindcss": "^4.1.16"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.1.16"
+  }
+}

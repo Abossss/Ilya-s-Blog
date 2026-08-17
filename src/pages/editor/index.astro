@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import "../../styles/post-editor.css";
+import { SITE } from "../../config";
+import { withBase } from "../../lib/site-path";
+
+const siteOrigin = Astro.site?.origin ?? "";
+---
+
+<BaseLayout
+  title={`Post Editor | ${SITE.title}`}
+  description="Notion-like local post editor"
+  mainClass="editor-main"
+>
+  <div class="post-editor" data-editor data-site-origin={siteOrigin}>
+    <header class="editor-topbar">
+      <a class="editor-brand" href={withBase('/blog/')} aria-label="返回博客"><span>{SITE.brand.name}</span><strong>{SITE.brand.accent}</strong></a>
+      <div class="editor-actions" aria-label="编辑器操作">
+        <a class="editor-guide-download" href={withBase('/editor.md')} download>AI 写作指南</a>
+        <button type="button" data-action="load-json">导入</button>
+        <button type="button" data-action="copy-json">JSON 复制</button>
+        <button type="button" data-action="save-json">JSON 保存</button>
+        <input type="file" data-json-import accept="application/json,.json" hidden />
+      </div>
+    </header>
+
+    <div class="editor-shell">
+      <aside class="editor-side" aria-label="文章元数据">
+        <section class="editor-panel">
+          <div class="editor-panel__head">
+            <h2>属性</h2>
+            <span data-save-state>已保存</span>
+          </div>
+          <label>
+            <span>别名</span>
+            <input type="text" data-meta="slug" placeholder="my-post-title" />
+          </label>
+          <label>
+            <span>简介</span>
+            <textarea data-meta="description" rows="4" placeholder="将显示在列表与 RSS 中的简短摘要"></textarea>
+          </label>
+          <label>
+            <span>日期</span>
+            <input type="date" data-meta="pubDate" />
+          </label>
+          <label>
+            <span>分类</span>
+            <input type="text" data-meta="category" placeholder="engineering" />
+          </label>
+          <label>
+            <span>标签</span>
+            <input type="text" data-meta="tags" placeholder="astro, notion, ui" />
+          </label>
+          <label>
+            <span>状态</span>
+            <div class="status-picker" data-status-picker>
+              <button type="button" class="status-picker__trigger" data-status-trigger aria-expanded="false">选择状态</button>
+              <div class="status-picker__chips" data-status-chips aria-live="polite"></div>
+              <input type="text" data-status-input placeholder="直接输入后按回车" aria-label="添加状态" />
+              <div class="status-picker__menu" data-status-menu hidden>
+                <button type="button" data-status-option="done" aria-pressed="false">done</button>
+                <button type="button" data-status-option="encrypted" aria-pressed="false">encrypted</button>
+                <button type="button" data-status-option="draft" aria-pressed="false">draft</button>
+                <button type="button" data-status-option="deprecated" aria-pressed="false">deprecated</button>
+              </div>
+            </div>
+          </label>
+        </section>
+
+        <section class="editor-panel">
+          <div class="editor-panel__head">
+            <h2>块</h2>
+            <span data-block-count>0</span>
+          </div>
+          <div class="block-palette" aria-label="添加块">
+            <p class="block-palette__group">基础</p>
+            <button type="button" data-add-block="paragraph">文本</button>
+            <button type="button" data-add-block="heading:1">标题 1</button>
+            <button type="button" data-add-block="heading:2">标题 2</button>
+            <button type="button" data-add-block="heading:3">标题 3</button>
+            <p class="block-palette__group">结构 &middot; 强调</p>
+            <button type="button" data-add-block="todo">待办</button>
+            <button type="button" data-add-block="toggle">折叠</button>
+            <button type="button" data-add-block="quote">引用</button>
+            <button type="button" data-add-block="callout">提示框</button>
+            <button type="button" data-add-block="divider">分隔线</button>
+            <button type="button" data-add-block="table_of_contents">目录</button>
+            <button type="button" data-add-block="context">背景 &middot; 前提说明</button>
+            <p class="block-palette__group">内容</p>
+            <button type="button" data-add-block="image">图片</button>
+            <button type="button" data-add-block="bookmark">链接预览</button>
+            <button type="button" data-add-block="equation">公式</button>
+            <button type="button" data-add-block="table">表格</button>
+          </div>
+        </section>
+
+        <section class="editor-panel editor-panel--quiet">
+          <div class="editor-panel__head">
+            <h2>文档</h2>
+          </div>
+          <button type="button" data-action="reset-sample">示例</button>
+          <button type="button" data-action="clear-document">清空</button>
+        </section>
+      </aside>
+
+      <main class="editor-canvas" aria-label="写作区域">
+        <section class="editor-page" data-editor-page>
+          <div class="editor-cover" data-page-cover hidden>
+            <div class="editor-cover__media" data-cover-media></div>
+            <div class="editor-cover__actions">
+              <button type="button" data-page-action="change-cover">更换封面</button>
+              <button type="button" data-page-action="remove-cover">移除</button>
+            </div>
+          </div>
+          <div class="editor-page__body">
+            <div class="editor-page-tools">
+              <button class="editor-page-tool" type="button" data-page-action="add-icon">&#x1F600; 添加图标</button>
+              <button class="editor-page-tool" type="button" data-page-action="add-cover">&#x25A7; 添加封面</button>
+            </div>
+            <div class="editor-page-icon-wrap" data-page-icon-wrap hidden>
+              <button class="editor-page-icon" type="button" data-page-icon aria-label="更改页面图标"></button>
+              <button class="editor-page-icon-remove" type="button" data-page-action="remove-icon" title="移除图标" aria-label="移除图标">&#xD7;</button>
+            </div>
+            <input class="editor-title" data-meta="title" placeholder="无标题" aria-label="文章标题" />
+            <div class="editor-submeta">
+              <span data-derived-slug>untitled</span>
+              <span data-derived-date></span>
+            </div>
+            <div class="editor-blocks" data-blocks aria-label="可编辑块"></div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="editor-export" aria-label="JSON 预览">
+        <section class="editor-panel editor-panel--preview">
+          <div class="editor-panel__head">
+            <h2>Post JSON</h2>
+            <span data-json-size>0 chars</span>
+          </div>
+          <textarea class="editor-json-input" data-json-editor spellcheck="false" aria-label="Post JSON 编辑器"></textarea>
+        </section>
+      </aside>
+    </div>
+
+    <div class="slash-menu" data-slash-menu hidden></div>
+    <div class="inline-toolbar" data-inline-toolbar hidden role="toolbar" aria-label="文本格式">
+      <button type="button" data-inline-mark="bold" title="加粗" aria-label="加粗" aria-pressed="false">B</button>
+      <button type="button" data-inline-mark="italic" title="斜体" aria-label="斜体" aria-pressed="false"><em>I</em></button>
+      <button type="button" data-inline-mark="underline" title="下划线" aria-label="下划线" aria-pressed="false"><u>U</u></button>
+      <button type="button" data-inline-mark="strike" title="删除线" aria-label="删除线" aria-pressed="false"><s>S</s></button>
+      <button type="button" data-inline-mark="code" title="行内代码" aria-label="行内代码" aria-pressed="false">code</button>
+      <button type="button" data-inline-action="link" title="插入或移除链接" aria-label="插入或移除链接">link</button>
+      <button type="button" data-inline-action="text-color" title="文字颜色" aria-label="文字颜色"><span>A</span></button>
+    </div>
+    <div class="color-menu" data-color-menu hidden></div>
+    <div class="emoji-popover" data-emoji-menu hidden></div>
+    <div class="cover-menu" data-cover-menu hidden></div>
+    <div class="block-context-menu" data-block-context-menu hidden></div>
+    <div class="editor-toast" data-toast hidden></div>
+  </div>
+
+  <script>
+    import { initPostEditor } from "../../scripts/post-editor";
+
+    initPostEditor();
+  </script>
+  <script>
+    import { initDriveImageUpload } from '../../scripts/drive-image-upload';
+
+    initDriveImageUpload();
+  </script>
+</BaseLayout>

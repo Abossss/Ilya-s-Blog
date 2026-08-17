@@ -1,0 +1,8 @@
+{
+  "manualLinks": [],
+  "autoLinks": {
+    "sharedTags": true,
+    "minimumSharedTags": 1,
+    "weight": 1
+  }
+}
