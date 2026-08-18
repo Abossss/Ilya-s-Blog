@@ -1,0 +1,998 @@
+{
+  "version": 2,
+  "meta": {
+    "slug": "",
+    "description": "",
+    "pubDate": "2026-08-18",
+    "category": "",
+    "tags": "",
+    "title": "使用 CC‑Switch 让 Claude Code 调用国产大模型（原创教程）",
+    "status": [
+      "draft"
+    ]
+  },
+  "page": {},
+  "blocks": [
+    {
+      "id": "block-msy9n71w-hndrwg",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "摘要：Claude‑Code 是 Anthropic 推出的 AI 编程工具，默认只能调用自家 Claude 系列模型。借助 CC‑Switch 代理转发工具，我们可以把请求转接给兼容 Anthropic 协议的国内大模型，像 DeepSeek、小米 MiMo，"
+        },
+        {
+          "text": "不需要访问境外网络环境",
+          "annotations": {
+            "bold": true
+          }
+        },
+        {
+          "text": "，终端和 VSCode 插件都可以正常工作。下面是完整实操步骤。\n"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71w-4s5ahs",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "前置依赖准备"
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "block-msy9n71x-64vytw",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "整个方案依赖 Node.js 运行环境，这是运行 Claude‑Code 的基础。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-cthn4d",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "前往 Node.js 官网，下载 "
+        },
+        {
+          "text": "LTS 长期支持版本",
+          "annotations": {
+            "bold": true
+          }
+        },
+        {
+          "text": "，不要选尝鲜版。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-yny04v",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "一路默认完成安装。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-ckvxfe",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "打开终端（Windows PowerShell /macOS 终端），执行下面两条命令，输出版本号就代表环境正常："
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-jr1khf",
+      "type": "code",
+      "language": "bash",
+      "code": "node -v\nnpm -v"
+    },
+    {
+      "id": "block-msy9n71x-67j70l",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "安装 Claude‑Code 命令行工具"
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "block-msy9n71x-ua32q7",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "通过 npm 全局安装 Claude‑Code，这样系统任意位置都可以调用 "
+        },
+        {
+          "text": "claude",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": " 指令。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-8y5mu2",
+      "type": "code",
+      "language": "bash",
+      "code": "npm install -g @anthropic-ai/claude-code"
+    },
+    {
+      "id": "block-msy9n71x-bf14wg",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "安装结束后做校验："
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-sp4rvb",
+      "type": "code",
+      "language": "bash",
+      "code": "claude --version"
+    },
+    {
+      "id": "block-msy9n71x-0vjd5c",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "控制台打印出版本号，说明 CLI 工具安装完毕。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-oz1b9p",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "部署 CC‑Switch 中转工具"
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "block-msy9n71x-xec2bq",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "CC‑Switch 的核心能力就是做协议适配拦截，劫持 Claude‑Code 的网络请求，转发到我们填写的国产大模型接口。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-lf41vm",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "前往项目的 GitHub Releases 发布页，根据你的操作系统下载对应安装包："
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-ex6aib",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "Windows："
+        },
+        {
+          "text": ".msi",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": " 安装包，双击执行安装"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-gl38fu",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "MacOS："
+        },
+        {
+          "text": ".dmg",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "，将程序拖拽到应用程序文件夹"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-i5d875",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "Linux：选择 AppImage 或者 deb 包按系统惯例安装"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-rjli2z",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "启动 CC‑Switch，界面顶部务必切换到 "
+        },
+        {
+          "text": "Claude Code",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": " 模式，模式选错将无法代理生效。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-izxwvn",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "小提示：软件运行期间不要后台关闭，只要使用 Claude‑Code，中转程序就需要保持开启。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-y99kqp",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "接入 DeepSeek 大模型"
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "block-msy9n71x-kk5gsf",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "第一步：获取 API 密钥"
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "block-msy9n71x-9ogo0z",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "登录 DeepSeek 开放平台，进入 API‑Keys 管理页面。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-53agi5",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "创建全新密钥，密钥只会展示一次，立刻复制保存，丢失只能重新生成。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-gr6han",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "⚠️ 重要：API Key 不要分享、不要直接贴到博客、代码里泄露，会消耗你的账户余额。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-d0ezyl",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "第二步：CC‑Switch 添加 DeepSeek 服务商"
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "block-msy9n71x-tk765g",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "在软件界面点右上角加号新增服务商，预设下拉菜单直接选择 DeepSeek，大部分参数会自动填充。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-rvxdv7",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "核对关键配置项："
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-40w0r4",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "请求地址 (BaseURL)："
+        },
+        {
+          "text": "https://api.deepseek.com/anthropic",
+          "annotations": {
+            "code": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-b83o7d",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "鉴权方式："
+        },
+        {
+          "text": "ANTHROPIC_AUTH_TOKEN",
+          "annotations": {
+            "code": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-vhu2cd",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "API 协议格式："
+        },
+        {
+          "text": "Anthropic Message",
+          "annotations": {
+            "code": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-84wilf",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "粘贴刚才复制的 sk‑开头密钥"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-zpxwda",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "模型映射关系（Claude 内部三个角色映射到 DeepSeek 模型）"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-il5xs5",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "| Claude 内部角色 | 映射模型名称 | 使用场景 |\n| ---- | ---- | ---- |\n| Opus（高能力复杂任务） | deepseek‑v4‑pro | 代码重构、大文件分析；后缀加上"
+        },
+        {
+          "text": "[1m]",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "开启百万 token 上下文 |\n| Sonnet（标准日常） | deepseek‑v4‑pro | 日常写代码、查 bug |\n| Haiku（快速轻量） | deepseek‑v4‑flash | 简单问答、小片段生成，追求响应速度 |"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-4sp0i0",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "保存配置，点击启用，状态标识变为绿色，执行健康检查确认连通无报错。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-cjxyfk",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "第三步：验证链路通不通"
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "block-msy9n71x-jxyqyf",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "终端直接输入 "
+        },
+        {
+          "text": "claude",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": " 进入交互会话，随便提问：告诉我你当前使用的模型是什么。\n如果回答返回 DeepSeek 相关信息，代表整套代理链路跑通。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-aeuy7s",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "接入小米 MiMo 大模型"
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "block-msy9n71x-70rc00",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "获取 MiMo API Key"
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "block-msy9n71x-jfkd1b",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "打开小米 MiMo 开放平台完成账号注册，新账号一般赠送体验额度。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-n7d9lb",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "在侧边栏找到 API Keys，新建密钥，复制保存。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-t8pqnq",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "CC‑Switch 添加 MiMo 服务商"
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "block-msy9n71x-qp945e",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "点加号新增服务商，预设选择小米 mimo，自动填充大部分配置。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-juwgf5",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "⚠️ "
+        },
+        {
+          "text": "鉴权类型大坑",
+          "annotations": {
+            "bold": true
+          }
+        },
+        {
+          "text": "：这里鉴权字段必须选 "
+        },
+        {
+          "text": "ANTHROPIC_AUTH_TOKEN",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "，千万不要用普通 API_KEY，否则会一直鉴权失败。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-ckeveo",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "关键参数参考："
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-39uov9",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "请求地址："
+        },
+        {
+          "text": "https://token‑plan‑cn.xiaomimimo.com/anthropic",
+          "annotations": {
+            "code": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-f1g8ai",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "API 格式："
+        },
+        {
+          "text": "Anthropic Message（原生）",
+          "annotations": {
+            "code": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-c1uzlr",
+      "type": "bulleted_list",
+      "richText": [
+        {
+          "text": "填入你的 MiMo sk‑密钥"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71x-con6ay",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "设置模型映射"
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "block-msy9n71y-cvpici",
+      "type": "table",
+      "hasHeaderRow": true,
+      "rows": [
+        [
+          {
+            "richText": [
+              {
+                "text": "Claude 内部角色"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "映射模型名称"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "使用场景"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "richText": [
+              {
+                "text": "Opus"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "mimo‑v2.5‑pro[1m]"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "开启百万超长上下文，适合读取大型项目代码"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "richText": [
+              {
+                "text": "Sonnet"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "mimo‑v2.5‑pro"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "普通开发工作，200K 上下文"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "richText": [
+              {
+                "text": "Haiku"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "mimo‑v2‑flash"
+              }
+            ]
+          },
+          {
+            "richText": [
+              {
+                "text": "快速简单任务"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "id": "block-msy9n71y-7fmb4e",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "注意模型名称全部小写，不要带多余空格符号，配置完成保存、启用，运行健康检查。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-r8v4r4",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "功能测试"
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "block-msy9n71y-cans0p",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "终端执行 "
+        },
+        {
+          "text": "claude",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "，发起询问，回复出现 MiMo / 小米标识即为配置成功。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-jglq45",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "VSCode Claude Code 插件对接配置"
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "block-msy9n71y-liwe68",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "重点：只要 CC‑Switch 配置正常，VSCode 的 Claude Code 插件"
+        },
+        {
+          "text": "不需要额外改配置文件",
+          "annotations": {
+            "bold": true
+          }
+        },
+        {
+          "text": "，会自动读取本地的 "
+        },
+        {
+          "text": "~/.claude/settings.json",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-6aaezt",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "操作步骤："
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-eaqkfr",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "VSCode 打开扩展面板（快捷键 "
+        },
+        {
+          "text": "Ctrl+Shift+X",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "）"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-bsrh2l",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "搜索 "
+        },
+        {
+          "text": "Claude Code",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "，确认发布者为 Anthropic，点击安装。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-7nrcan",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "安装成功后编辑器右上角会出现 Spark 小图标，点击就唤起对话窗口。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-wvs3lj",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "备选入口："
+        },
+        {
+          "text": "Ctrl+Shift+P",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": " 打开命令面板，输入 "
+        },
+        {
+          "text": "Claude Code: Open in New Tab",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": "。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-r34w98",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "踩坑提示：VSCode 插件不切换国产模型，先确认 CC‑Switch 程序正在运行、服务商处于已启用绿色状态；重启 VSCode。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-5sikgf",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "常见排错汇总（博客加分章节）"
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "block-msy9n71y-s19asu",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "健康检查失败"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-suf1un",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "优先核对鉴权类型，很多人错误选 API_KEY；核对接口地址有没有复制多余换行空格；确认账户 API 余额充足。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-pxjiu6",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "有输出，但依旧返回 Claude 原生模型"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-kxlvw3",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "CC‑Switch 没有成功启用，确认顶部选中 "
+        },
+        {
+          "text": "Claude Code",
+          "annotations": {
+            "code": true
+          }
+        },
+        {
+          "text": " 模式，服务商状态为绿色。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-loinip",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "VSCode 插件没生效"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-ovp165",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "关闭 VSCode，确认 CC‑Switch 软件没有退出，重启编辑器。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-541zhw",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "请求报错 401"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-5ur2ro",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "API Key 复制不全，有多余换行，建议删除重新粘贴密钥。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-y1rgza",
+      "type": "heading",
+      "richText": [
+        {
+          "text": "写博客补充建议（你发布时可以用）"
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "block-msy9n71y-dly6ix",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "可以拓展：讲原理简单几句话，CC‑Switch 本质本地中间人代理，拦截 Claude Code 请求，转换成国产模型兼容的 Anthropic 协议；"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-ozokcw",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "可以拓展其他模型接入：比如豆包、通义千问，只要平台提供兼容 Anthropic 接口就可以照葫芦画瓢；"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-1reqrl",
+      "type": "numbered_list",
+      "richText": [
+        {
+          "text": "风险提示：所有 API 调用会消耗你在各个大模型平台账户余额，注意控制用量，密钥妥善保管。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-pflod7",
+      "type": "paragraph",
+      "richText": [
+        {
+          "text": "如果你希望，我还可以再压缩成简短版本，或者生成适合 Hexo/VitePress 的博文。"
+        }
+      ]
+    },
+    {
+      "id": "block-msy9n71y-r64qv4",
+      "type": "quote",
+      "richText": [
+        {
+          "text": "(Note: May contain AI-generated content.)"
+        }
+      ]
+    }
+  ]
+}
