@@ -6,9 +6,9 @@
     "pubDate": "2026-08-18",
     "category": "",
     "tags": "",
-    "title": "使用 CC‑Switch 让 Claude Code 调用国产大模型（原创教程）",
+    "title": "使用 CC‑Switch 让 Claude Code 调用国产大模型",
     "status": [
-      "draft"
+      "done"
     ]
   },
   "page": {},
@@ -523,7 +523,7 @@
           }
         },
         {
-          "text": "，千万不要用普通 API_KEY，否则会一直鉴权失败。\n\n"
+          "text": "，千万不要用普通 API_KEY，否则会一直鉴权失败。\n"
         }
       ]
     },
@@ -689,7 +689,7 @@
       "type": "quote",
       "richText": [
         {
-          "text": "注意模型名称全部小写，不要带多余空格符号，配置完成保存、启用，运行健康检查。\n\n"
+          "text": "注意模型名称全部小写，不要带多余空格符号，配置完成保存、启用，运行健康检查。\n"
         }
       ]
     },
@@ -754,7 +754,7 @@
           }
         },
         {
-          "text": "。\n\n"
+          "text": "。\n"
         }
       ]
     },
@@ -844,153 +844,7 @@
       "type": "quote",
       "richText": [
         {
-          "text": "踩坑提示：VSCode 插件不切换国产模型，先确认 CC‑Switch 程序正在运行、服务商处于已启用绿色状态；重启 VSCode。\n\n"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-5sikgf",
-      "type": "heading",
-      "richText": [
-        {
-          "text": "常见排错汇总（博客加分章节）"
-        }
-      ],
-      "level": 1
-    },
-    {
-      "id": "block-msy9n71y-s19asu",
-      "type": "numbered_list",
-      "richText": [
-        {
-          "text": "健康检查失败"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-suf1un",
-      "type": "paragraph",
-      "richText": [
-        {
-          "text": "优先核对鉴权类型，很多人错误选 API_KEY；核对接口地址有没有复制多余换行空格；确认账户 API 余额充足。"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-pxjiu6",
-      "type": "numbered_list",
-      "richText": [
-        {
-          "text": "有输出，但依旧返回 Claude 原生模型"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-kxlvw3",
-      "type": "paragraph",
-      "richText": [
-        {
-          "text": "CC‑Switch 没有成功启用，确认顶部选中 "
-        },
-        {
-          "text": "Claude Code",
-          "annotations": {
-            "code": true
-          }
-        },
-        {
-          "text": " 模式，服务商状态为绿色。"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-loinip",
-      "type": "numbered_list",
-      "richText": [
-        {
-          "text": "VSCode 插件没生效"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-ovp165",
-      "type": "paragraph",
-      "richText": [
-        {
-          "text": "关闭 VSCode，确认 CC‑Switch 软件没有退出，重启编辑器。"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-541zhw",
-      "type": "numbered_list",
-      "richText": [
-        {
-          "text": "请求报错 401"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-5ur2ro",
-      "type": "paragraph",
-      "richText": [
-        {
-          "text": "API Key 复制不全，有多余换行，建议删除重新粘贴密钥。"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-y1rgza",
-      "type": "heading",
-      "richText": [
-        {
-          "text": "写博客补充建议（你发布时可以用）"
-        }
-      ],
-      "level": 2
-    },
-    {
-      "id": "block-msy9n71y-dly6ix",
-      "type": "numbered_list",
-      "richText": [
-        {
-          "text": "可以拓展：讲原理简单几句话，CC‑Switch 本质本地中间人代理，拦截 Claude Code 请求，转换成国产模型兼容的 Anthropic 协议；"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-ozokcw",
-      "type": "numbered_list",
-      "richText": [
-        {
-          "text": "可以拓展其他模型接入：比如豆包、通义千问，只要平台提供兼容 Anthropic 接口就可以照葫芦画瓢；"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-1reqrl",
-      "type": "numbered_list",
-      "richText": [
-        {
-          "text": "风险提示：所有 API 调用会消耗你在各个大模型平台账户余额，注意控制用量，密钥妥善保管。"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-pflod7",
-      "type": "paragraph",
-      "richText": [
-        {
-          "text": "如果你希望，我还可以再压缩成简短版本，或者生成适合 Hexo/VitePress 的博文。"
-        }
-      ]
-    },
-    {
-      "id": "block-msy9n71y-r64qv4",
-      "type": "quote",
-      "richText": [
-        {
-          "text": "(Note: May contain AI-generated content.)"
+          "text": "踩坑提示：VSCode 插件不切换国产模型，先确认 CC‑Switch 程序正在运行、服务商处于已启用绿色状态；重启 VSCode。\n"
         }
       ]
     }
